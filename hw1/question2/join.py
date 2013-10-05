@@ -14,21 +14,18 @@ def mapper(record):
     mr.emit_intermediate(key, (type_, value))
 
 def reducer(key, list_of_values):
-    print len(list_of_values)
-    orders = []
+    order = None
     line_items = []
+    
     for tuple_ in list_of_values:
         if tuple_[0] == 'order':
-            orders += tuple_[1]
+            order = tuple_[1]
         elif tuple_[0] == 'line_item':
-            line_items += tuple_[1]
+            line_items.append(tuple_[1])
             
-    out = ['order', key]
-    out += orders
-    out += ['line_item', key]
-    out += line_items
+    for line_item in line_items:
+        mr.emit(['order', key] + order + ['line_item', key] + line_item)
     
-    mr.emit(out)
 
 # Do not modify below this line
 # =============================
